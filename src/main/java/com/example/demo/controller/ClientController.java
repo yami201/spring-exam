@@ -1,46 +1,59 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.entity.Document;
-import com.example.demo.entity.FicheEmprunt;
-import com.example.demo.entity.Livre;
+import com.example.demo.entity.Client;
 import com.example.demo.repository.AudioRepo;
-import com.example.demo.repository.LivreRepo;
-import com.example.demo.repository.VideoRepo;
+import com.example.demo.repository.ClientRepo;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Date;
+
 
 @RestController
 @RequestMapping("/client")
 public class ClientController {
     @Autowired
+    ClientRepo clientRepo;
+    
     AudioRepo audioRepo;
-    @Autowired
-    LivreRepo livreRepo;
-    @Autowired
-    VideoRepo videoRepo;
+    @PostMapping("/create")
+    public ResponseEntity<Client> createClient(@RequestBody Client client) {
+        try {
+            return new ResponseEntity<>(clientRepo.save(client), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
-//    @PostMapping("/emprunter/{idClient}/{codeDoc}")
-//    public ResponseEntity<FicheEmprunt> emprunterDoc(
-//            @PathVariable long idClient,
-//            @PathVariable String codeDoc
-//    ) {
-//        FicheEmprunt fiche = new FicheEmprunt();
-//        fiche.setDateEmprunt(new Date());
-//        long time = new Date().getTime();
-//        time += 2 * 24 * 3600 * 1000;
-//        fiche.setDateRappel(new Date(time));
-//        time += 2 * 24 * 3600 * 1000;
-//        fiche.setDateLimite(new Date(time));
-//
-//        Document doc;
-//
-//        audioRepo.finB
-//    }
+    @GetMapping("/get/all")
+    public ResponseEntity<List<Client>> getAllClients() {
+        return new ResponseEntity<>(clientRepo.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<Client> getMethodName(
+        @RequestParam String nom,
+        @RequestParam String prenom
+    ) {
+        return new ResponseEntity<>(clientRepo.findByNomAndPrenom(nom, prenom), HttpStatus.OK);
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteClient(@PathVariable long id) {
+        try {
+            clientRepo.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

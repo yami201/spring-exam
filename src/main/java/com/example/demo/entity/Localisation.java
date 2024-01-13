@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -15,6 +16,7 @@ public class Localisation {
     private String salle;
     private String rayon;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "localisation")
     private List<Document> documents;
 
